@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CHEQ · Is there a Roblox ban wave right now?</title>
+<meta name="description" content="Watches the things people actually watch to guess if a Roblox ban wave is happening: community reports, executor detections, client updates, and the usual wave rhythm." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<script>
+  // set theme before paint so there's no flash
+  (function () {
+    var t = null;
+    try { t = JSON.parse(localStorage.getItem("cheq.theme")); }
+    catch (e) { t = localStorage.getItem("cheq.theme"); }
+    if (t !== "light" && t !== "dark") {
+      t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    }
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#top">Skip to content</a>
+<div class="bg-grid" aria-hidden="true"></div>
+<noscript><div class="noscript-note">CHEQ needs JavaScript to pull live data. The text below still explains how it works.</div></noscript>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.6" opacity="0.45"/>
+        <path d="M5 18.5c2.8-6.5 5.6-9.8 8.4-9.8 4.4 0 3.7 7.6 8 7.6 2.2 0 4.1-2.1 5.6-6.3" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-name">CHEQ</span>
+      <span class="brand-sub">WAVE WATCH</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#signals">Signals</a>
+      <a href="#feed">Community</a>
+      <a href="#history">History</a>
+      <a href="#methodology">How it works</a>
+    </nav>
+    <div class="nav-right">
+      <div class="nav-clock mono">
+        <span id="utcClock" title="UTC time">--:--:--</span>
+        <span class="clock-sep">·</span>
+        <span id="refreshIn" title="Next refresh">--:--</span>
+      </div>
+      <button class="theme-btn" id="themeBtn" title="Toggle light / dark" aria-label="Toggle theme">
+        <svg class="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <svg class="ic-moon" viewBox="0 0 24 24"><path d="M20.6 14.2A8.5 8.5 0 0 1 9.8 3.4a8.5 8.5 0 1 0 10.8 10.8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="refresh-btn" id="refreshBtn" title="Refresh now (R)">
+        <svg viewBox="0 0 36 36" class="refresh-ring">
+          <circle cx="18" cy="18" r="15.5" class="ring-bg"/>
+          <circle cx="18" cy="18" r="15.5" class="ring-fg" id="ringFg"/>
+        </svg>
+        <svg viewBox="0 0 24 24" class="refresh-icon" id="refreshIcon">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ STATUS ============ -->
+  <section class="hero" id="status">
+    <div class="hero-grid">
+      <div class="verdict-card card" id="verdictCard">
+        <div class="verdict-top">
+          <span class="eyebrow">live read</span>
+          <span class="status-pill" id="statusPill"><span class="dot"></span><span id="statusPillText">…</span></span>
+        </div>
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 220 132" class="gauge" aria-hidden="true">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%"  stop-color="#34d399"/>
+                <stop offset="45%" stop-color="#fbbf24"/>
+                <stop offset="75%" stop-color="#fb923c"/>
+                <stop offset="100%" stop-color="#ef4444"/>
+              </linearGradient>
+            </defs>
+            <path d="M 20 110 A 90 90 0 0 1 200 110" class="gauge-track"/>
+            <path d="M 20 110 A 90 90 0 0 1 200 110" class="gauge-fill" id="gaugeFill"/>
+            <g class="gauge-ticks" id="gaugeTicks"></g>
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-score"><span id="riskScore">--</span><span class="gauge-max">/100</span></div>
+            <div class="gauge-verdict" id="riskVerdict">READING</div>
+          </div>
+        </div>
+        <p class="verdict-note" id="verdictNote">Pulling the signals together…</p>
+        <button class="copy-status" id="copyStatus" title="Copy a one-line status summary">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 15V6a2 2 0 0 1 2-2h9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span id="copyStatusLabel">copy status</span>
+        </button>
+        <div class="verdict-meta mono">
+          <span id="metaLastWave">Last wave: …</span>
+          <span class="meta-sep">·</span>
+          <span id="metaWindow">Next window: …</span>
+          <span class="meta-sep">·</span>
+          <span id="metaUpdated">Updated: …</span>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat card">
+          <div class="stat-label">Ban-talk posts <span class="stat-window">24H</span></div>
+          <div class="stat-value mono" id="statPosts24h">…</div>
+          <div class="stat-sub" id="statPosts7d">… this week</div>
+          <canvas class="spark" id="sparkPosts" height="38"></canvas>
+        </div>
+        <div class="stat card">
+          <div class="stat-label">Executors flagged</div>
+          <div class="stat-value mono" id="statDetected">…</div>
+          <div class="stat-sub" id="statDetectedSub">of … tracked</div>
+        </div>
+        <div class="stat card">
+          <div class="stat-label">Still updating <span class="stat-window">POST-DEPLOY</span></div>
+          <div class="stat-value mono" id="statPending">…</div>
+          <div class="stat-sub" id="statPendingSub">…</div>
+        </div>
+        <div class="stat card">
+          <div class="stat-label">Roblox client</div>
+          <div class="stat-value mono stat-value-sm" id="statVersion">…</div>
+          <div class="stat-sub" id="statVersionSub">…</div>
+        </div>
+      </div>
+    </div>
+    <div class="sources-strip mono" id="sourcesStrip"></div>
+  </section>
+
+  <!-- ============ SIGNALS ============ -->
+  <section class="section" id="signals">
+    <div class="section-head">
+      <span class="eyebrow">the signals</span>
+      <h2>Where the score comes from</h2>
+      <p class="section-desc">Five things the community has learned to watch, each one adding points to the total. Weights come from how well each signal lined up with waves people actually saw.</p>
+    </div>
+    <div class="signal-grid" id="signalGrid">
+      <div class="signal card skeleton-block"></div>
+      <div class="signal card skeleton-block"></div>
+      <div class="signal card skeleton-block"></div>
+      <div class="signal card skeleton-block"></div>
+      <div class="signal card skeleton-block"></div>
+    </div>
+  </section>
+
+  <!-- ============ FEED + EXECUTORS ============ -->
+  <section class="section" id="feed">
+    <div class="split">
+      <div class="split-left">
+        <div class="section-head">
+          <span class="eyebrow">the feed</span>
+          <h2>What r/robloxhackers is saying</h2>
+          <p class="section-desc">New posts get run against a ban-wave word list and weighed by age and upvotes. When a real wave lands, this feed floods. That flood is the signal.</p>
+        </div>
+        <div class="feed-filters" id="feedFilters">
+          <button class="chip active" data-filter="all">Everything</button>
+          <button class="chip" data-filter="strong">Alerts</button>
+          <button class="chip" data-filter="weak">Related</button>
+        </div>
+        <ul class="post-list" id="postList">
+          <li class="post skeleton-block"></li>
+          <li class="post skeleton-block"></li>
+          <li class="post skeleton-block"></li>
+        </ul>
+        <div class="feed-foot mono" id="feedFoot"></div>
+      </div>
+
+      <div class="split-right" id="executors">
+        <div class="section-head">
+          <span class="eyebrow">the surface</span>
+          <h2>Executor status</h2>
+          <p class="section-desc">Live registry data from WEAO. A pile of fresh <span class="tx-red">Detected</span> flags, or everyone stuck <span class="tx-amber">Updating</span> after a deploy, is usually the earliest public hint that something moved.</p>
+        </div>
+        <div class="feed-filters" id="execFilters">
+          <button class="chip active" data-efilter="all">All</button>
+          <button class="chip" data-efilter="detected">Detected</button>
+          <button class="chip" data-efilter="pending">Updating</button>
+          <button class="chip" data-efilter="working">Working</button>
+          <input class="exec-search mono" id="execSearch" type="search" placeholder="filter…" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="exec-table card">
+          <div class="exec-thead mono">
+            <span>Executor</span><span>Platform</span><span>Status</span>
+          </div>
+          <div class="exec-body" id="execBody">
+            <div class="exec-row skeleton-block"></div>
+            <div class="exec-row skeleton-block"></div>
+            <div class="exec-row skeleton-block"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HISTORY ============ -->
+  <section class="section" id="history">
+    <div class="section-head">
+      <span class="eyebrow">the ledger</span>
+      <h2>Waves the data shows</h2>
+      <p class="section-desc">Rebuilt on every visit from live archive data: days where ban-talk on r/robloxhackers spiked way past normal, clustered into wave windows. Nothing here is hand-written.</p>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <!-- ============ METHOD ============ -->
+  <section class="section" id="methodology">
+    <div class="section-head">
+      <span class="eyebrow">the method</span>
+      <h2>How the score works</h2>
+      <p class="section-desc">No black box. Every point in the total is accounted for below, and it's the same logic the community's trackers and anti-cheat watchers describe in public.</p>
+    </div>
+    <div class="method-grid">
+      <div class="card method">
+        <div class="method-w mono">40<span>pts</span></div>
+        <h3>Ban talk</h3>
+        <p>Posts get sorted into "definitely about a wave" (worth 2x) and "ban-adjacent" (worth 0.6x), then scored by upvotes and freshness. One post means nothing. A dozen in a day usually means something.</p>
+      </div>
+      <div class="card method">
+        <div class="method-w mono">25<span>pts</span></div>
+        <h3>Detection flags</h3>
+        <p>What share of tracked executors are flagged Detected right now. When most of the scene is flagged, Roblox is sitting on a pile of detections, and that pile is what a wave is made of.</p>
+      </div>
+      <div class="card method">
+        <div class="method-w mono">15<span>pts</span></div>
+        <h3>Patch window</h3>
+        <p>Executors still rebuilding after a new client shipped. Anti-cheat changes ride inside those updates, so a wide-open patch window means the ground just moved under everyone.</p>
+      </div>
+      <div class="card method">
+        <div class="method-w mono">10<span>pts</span></div>
+        <h3>Deploy timing</h3>
+        <p>How fresh the last Windows build is, plus whether the next one is already staged. A surprise update mid-week is rarely boring.</p>
+      </div>
+      <div class="card method">
+        <div class="method-w mono">10<span>pts</span></div>
+        <h3>The rhythm</h3>
+        <p>Waves have tended to come around every three months or so. Once the ledger goes quiet for ~75 days, this signal starts adding points on its own.</p>
+      </div>
+      <div class="card method method-verdicts">
+        <div class="method-w mono">∑</div>
+        <h3>The verdicts</h3>
+        <ul class="verdict-scale mono">
+          <li><span class="v-dot" style="--c:#34d399"></span>0-24&nbsp; CLEAR</li>
+          <li><span class="v-dot" style="--c:#fbbf24"></span>25-49&nbsp; ELEVATED</li>
+          <li><span class="v-dot" style="--c:#fb923c"></span>50-74&nbsp; HIGH RISK</li>
+          <li><span class="v-dot" style="--c:#ef4444"></span>75-100&nbsp; WAVE LIKELY</li>
+        </ul>
+        <p class="method-foot">If ban talk alone clears 30 points, the verdict can't drop below HIGH RISK. At 36+ it calls it a wave regardless of what the rest say.</p>
+      </div>
+    </div>
+
+    <div class="card datasources">
+      <h3>Where the data comes from</h3>
+      <ul class="src-list mono">
+        <li><span class="src-status" id="srcCommunity">·</span>r/robloxhackers, via the built-in proxy when deployed, then the Arctic Shift archive, then public proxies</li>
+        <li><span class="src-status" id="srcWeao">·</span>WEAO registry at weao.xyz, for executor flags and client versions</li>
+        <li><span class="src-status" id="srcLedger">·</span>The wave ledger, rebuilt from archive scans of ban-talk history every 12h</li>
+      </ul>
+      <p class="src-note">Everything is fetched in your browser or by the one tiny serverless function included for deploys. No accounts, no tracking, no ads. Refreshes every 5 minutes.</p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="section-head">
+      <span class="eyebrow">questions</span>
+      <h2>Stuff people ask</h2>
+    </div>
+    <div class="faq">
+      <details class="card"><summary>What's a ban wave, exactly?</summary><p>Hyperion, Roblox's anti-cheat, usually doesn't ban you the moment it notices you. It logs detections and drops the hammer in batches, often weeks later. That's deliberate: instant bans would tell cheat devs exactly which build got caught. The side effect is that risk piles up quietly and then hits a lot of people on the same day.</p></details>
+      <details class="card"><summary>Can you actually predict one?</summary><p>Not to the day. Anyone claiming exact dates is guessing. What you can watch is pressure building: report spikes, detection flags stacking up, a fresh client build, and the rough three-month rhythm. This site measures that pressure. It doesn't claim to know the future.</p></details>
+      <details class="card"><summary>It says ELEVATED. Now what?</summary><p>Some of the conditions that were around before past waves are present. The usual community advice for these windows: assume anything you run is getting logged, keep the executor fully closed before you open Roblox, and give it a day or two after reports die down before trusting it's over.</p></details>
+      <details class="card"><summary>How accurate is it?</summary><p>Honestly, imperfect. Community data lags, the executor statuses are maintained by volunteers, and the rhythm is a pattern rather than a schedule. If the stakes actually matter to you, cross-check r/robloxhackers and the status Discords yourself before deciding anything.</p></details>
+      <details class="card"><summary>Why is the feed sometimes a few hours behind?</summary><p>When the direct route to Reddit gets blocked, posts come through a research archive that ingests on a short delay. Which source answered shows up on the health strip under the gauge.</p></details>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-name">CHEQ</span>
+      <span class="footer-tag">Ban wave watching, minus the Discord scroll.</span>
+    </div>
+    <p class="footer-note">A community project with no ties to Roblox. Community data is incomplete by nature, so treat this as one input among several, not gospel.</p>
+    <div class="footer-meta mono">
+      <span>refreshes every 5 min</span><span class="meta-sep">·</span>
+      <span>press R to refresh</span><span class="meta-sep">·</span>
+      <span id="footYear"></span>
+    </div>
+    <div class="credits">
+      <span class="credits-line">Made by <a class="credits-name" href="https://github.com/w0wzahh" target="_blank" rel="noopener">w0wzahh</a> with <svg class="credits-heart" viewBox="0 0 24 24" aria-label="love"><path d="M12 21s-7.5-4.7-9.8-9.2C.6 8.4 2.4 5 5.7 5c2 0 3.5 1.1 4.3 2.6L12 9l2-1.4C14.8 6.1 16.3 5 18.3 5c3.3 0 5.1 3.4 3.5 6.8C19.5 16.3 12 21 12 21Z" fill="currentColor"/></svg></span>
+      <a class="credits-gh mono" href="https://github.com/w0wzahh/cheq" target="_blank" rel="noopener" title="View source on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" fill="currentColor"/></svg>
+        github.com/w0wzahh/cheq
+      </a>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" title="Back to top" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
