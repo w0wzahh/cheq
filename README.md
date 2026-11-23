@@ -1,5 +1,7 @@
 # CHEQ
 
+**Live at https://w0wzahh.github.io/cheq/**
+
 A little status board that answers one question: is there a Roblox ban
 wave happening right now? It watches the same things the community
 watches and rolls them into a single 0-100 score.
@@ -44,8 +46,12 @@ the archive/proxy fallbacks.
 
 ## Deploy
 
-Drop it on Vercel to get the server-side Reddit path
-(`api/reddit.js` maps to `/api/reddit` on its own):
+It lives on GitHub Pages right now (repo Settings > Pages, main branch,
+root). Pages is static only, so `/api/reddit` doesn't run there. The
+site notices and falls back to the Arctic Shift archive on its own.
+
+Drop it on Vercel instead to get the server-side Reddit path
+(`api/reddit.js` maps to `/api/reddit` automatically):
 
 ```bash
 npx vercel deploy --prod
