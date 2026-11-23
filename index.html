@@ -4,8 +4,81 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CHEQ · Is there a Roblox ban wave right now?</title>
-<meta name="description" content="Watches the things people actually watch to guess if a Roblox ban wave is happening: community reports, executor detections, client updates, and the usual wave rhythm." />
+<meta name="description" content="Live Roblox ban wave tracker. Watches community reports, executor detection flags, client deployments and wave history, then rolls it all into one 0-100 risk score." />
+<meta name="keywords" content="roblox ban wave, roblox banwave, banwave tracker, roblox ban wave tracker, hyperion, byfron, executor status, roblox anti cheat, is there a ban wave" />
+<meta name="author" content="w0wzahh" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://cheq-orcin.vercel.app/" />
+<meta name="theme-color" content="#06080d" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#f3f5f9" media="(prefers-color-scheme: light)" />
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="manifest" href="site.webmanifest" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="CHEQ" />
+<meta property="og:title" content="CHEQ · Is there a Roblox ban wave right now?" />
+<meta property="og:description" content="Live ban wave risk tracker: community reports, executor detection flags, client deploys and wave history rolled into one score." />
+<meta property="og:url" content="https://cheq-orcin.vercel.app/" />
+<meta property="og:image" content="https://cheq-orcin.vercel.app/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="CHEQ · Is there a Roblox ban wave right now?" />
+<meta name="twitter:description" content="Live ban wave risk tracker: community reports, executor detection flags, client deploys and wave history rolled into one score." />
+<meta name="twitter:image" content="https://cheq-orcin.vercel.app/og.png" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "CHEQ",
+      "alternateName": "Roblox Ban Wave Tracker",
+      "url": "https://cheq-orcin.vercel.app/",
+      "description": "Live Roblox ban wave risk tracker built on community signals.",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "WebPage",
+      "name": "Is there a Roblox ban wave right now?",
+      "url": "https://cheq-orcin.vercel.app/",
+      "isPartOf": { "@type": "WebSite", "url": "https://cheq-orcin.vercel.app/" },
+      "about": { "@type": "Thing", "name": "Roblox ban wave" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What's a ban wave, exactly?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Hyperion, Roblox's anti-cheat, usually doesn't ban you the moment it notices you. It logs detections and drops the hammer in batches, often weeks later. The side effect is that risk piles up quietly and then hits a lot of people on the same day." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you actually predict a ban wave?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not to the day. What you can watch is pressure building: report spikes, detection flags stacking up, a fresh client build, and the rough three-month rhythm. CHEQ measures that pressure without claiming to know the future." }
+        },
+        {
+          "@type": "Question",
+          "name": "What does ELEVATED mean?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Some of the conditions that were around before past waves are present. The usual community advice: assume anything you run is getting logged, keep executors fully closed before opening Roblox, and give it a day or two after reports die down." }
+        },
+        {
+          "@type": "Question",
+          "name": "How accurate is CHEQ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Community data lags, executor statuses are volunteer-maintained, and the rhythm is a pattern rather than a schedule. Cross-check r/robloxhackers and the status Discords before deciding anything that matters." }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is the feed sometimes a few hours behind?",
+          "acceptedAnswer": { "@type": "Answer", "text": "When the direct route to Reddit gets blocked, posts come through a research archive that ingests on a short delay. Which source answered shows on the health strip under the gauge." }
+        }
+      ]
+    }
+  ]
+}
+</script>
 <script>
   // set theme before paint so there's no flash
   (function () {
@@ -69,6 +142,7 @@
 </header>
 
 <main id="top">
+  <h1 class="sr-only">CHEQ - live Roblox ban wave tracker and risk score</h1>
 
   <!-- ============ STATUS ============ -->
   <section class="hero" id="status">
