@@ -278,6 +278,16 @@ async function scanLedger(force = false) {
   scanning = true;
   setHealth("ledger", "deg");
   try {
+    // deployed builds: the function does the paging and everyone shares it
+    try {
+      const j = await fetchJSON("/api/ledger", { timeout: 45000 });
+      if (Array.isArray(j.waves)) {
+        store.set("ledgerScan", j);
+        setHealth("ledger", "ok");
+        return j;
+      }
+    } catch {}
+
     const byDay = {};
     // seed with the posts the live feed already pulled
     const seenIds = new Set();

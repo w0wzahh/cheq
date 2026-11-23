@@ -47,11 +47,19 @@ the archive/proxy fallbacks.
 ## Deploy
 
 It lives on GitHub Pages right now (repo Settings > Pages, main branch,
-root). Pages is static only, so `/api/reddit` doesn't run there. The
-site notices and falls back to the Arctic Shift archive on its own.
+root). Pages is static only, so `/api/reddit` and `/api/ledger` don't
+run there. The site notices and falls back to doing everything in the
+browser on its own.
 
-Drop it on Vercel instead to get the server-side Reddit path
-(`api/reddit.js` maps to `/api/reddit` automatically):
+Vercel is the better home for it, honestly:
+
+- `/api/reddit` pulls the live feed server-side
+- `/api/ledger` runs the whole archive scan inside the function and
+  edge-caches the result for 12h, so every visitor shares one scan
+  instead of each browser paging the archive itself (and getting
+  rate-limited)
+
+Both map automatically from the `api/` folder:
 
 ```bash
 npx vercel deploy --prod
