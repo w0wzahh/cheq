@@ -7,7 +7,7 @@
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://cheq-orcin.vercel.app/og.png</image:loc>
+      <image:loc>https://cheq-orcin.vercel.app/assets/img/og.png</image:loc>
       <image:title>CHEQ - Roblox ban wave tracker</image:title>
     </image:image>
   </url>

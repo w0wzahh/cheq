@@ -43,20 +43,31 @@ browser
   |-- /api/reddit   ->  reddit json -> arctic shift -> cached payload
   |-- /api/ledger   ->  paged archive scan -> spike clustering -> 12h edge cache
   |-- weao.xyz      ->  executor flags + client versions (direct, CORS open)
-  '-- static assets ->  index.html / styles.css / app.js / favicon.svg
+  '-- static assets ->  index.html + assets/ (css, js, images)
 ```
 
 ```
 cheq/
-  index.html        the whole UI shell
-  styles.css        theme system, dark + light
-  app.js            fetching, scoring engine, rendering
-  favicon.svg
+  index.html             the whole UI shell
+  assets/
+    css/styles.css       theme system, dark + light
+    js/app.js            fetching, scoring engine, rendering
+    img/
+      logo.png           brand mark
+      og.png             social preview card
+      icons/             favicon, apple touch icon, pwa icons
   api/
-    reddit.js       server-side live feed proxy, 5 min cache
-    ledger.js       server-side wave scan, 12h edge cache
-  vercel.json       headers
+    reddit.js            server-side live feed proxy, 5 min cache
+    ledger.js            server-side wave scan, 12h edge cache
+  site.webmanifest       pwa metadata
+  robots.txt             crawler rules
+  sitemap.xml            sitemap with image entry
+  vercel.json            headers
 ```
+
+`robots.txt`, `sitemap.xml` and the Google verification file sit at the
+root on purpose: crawlers and Search Console look for them at fixed
+paths, so they can't move into `assets/`.
 
 ## Run it locally
 
