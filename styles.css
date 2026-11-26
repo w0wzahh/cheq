@@ -443,6 +443,27 @@ details[open] summary { color: var(--accent); }
 details[open] summary::after { transform: rotate(45deg); }
 details p { padding: 0 20px 16px; font-size: 13.5px; color: var(--text-2); }
 
+/* ============ REPORT ============ */
+.report-card {
+  max-width: 860px;
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 24px 26px;
+}
+.report-icon { width: 34px; height: 34px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+.report-body h3 { font-size: 16px; margin-bottom: 6px; }
+.report-body p { font-size: 13.5px; color: var(--text-2); max-width: 58ch; margin-bottom: 16px; }
+.report-btn {
+  display: inline-block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  padding: 9px 18px; border-radius: 999px; text-decoration: none;
+  background: var(--accent); color: var(--accent-ink); border: 1px solid transparent;
+  transition: all .15s;
+}
+.report-btn:hover { filter: brightness(1.12); }
+.report-btn:active { transform: translateY(1px); }
+@media (max-width: 560px) {
+  .report-card { flex-direction: column; gap: 12px; padding: 20px; }
+}
+
 /* ============ FOOTER ============ */
 .footer { margin-top: 90px; border-top: 1px solid var(--border-soft); background: var(--bg-2); transition: background .25s ease; }
 .footer-inner { max-width: 1240px; margin: 0 auto; padding: 40px 24px 48px; }

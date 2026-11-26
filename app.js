@@ -278,15 +278,24 @@ async function scanLedger(force = false) {
   scanning = true;
   setHealth("ledger", "deg");
   try {
-    // deployed builds: the function does the paging and everyone shares it
-    try {
-      const j = await fetchJSON("/api/ledger", { timeout: 45000 });
-      if (Array.isArray(j.waves)) {
-        store.set("ledgerScan", j);
-        setHealth("ledger", "ok");
-        return j;
+    // deployed builds: the function does the paging and everyone shares it.
+    // an empty scan never replaces a real one, and cold starts get one retry.
+    for (let a = 0; a < 2; a++) {
+      try {
+        const j = await fetchJSON("/api/ledger", { timeout: 45000 });
+        if (Array.isArray(j.waves)) {
+          if (j.waves.length || !cached?.waves?.length) {
+            store.set("ledgerScan", j);
+            setHealth("ledger", "ok");
+            return j;
+          }
+          setHealth("ledger", "ok");
+          return cached;
+        }
+      } catch {
+        if (!a) await sleep(2000);
       }
-    } catch {}
+    }
 
     const byDay = {};
     // seed with the posts the live feed already pulled
@@ -323,6 +332,10 @@ async function scanLedger(force = false) {
       return cached || null;
     }
     const waves = wavesFromCounts(byDay);
+    if (!waves.length && cached?.waves?.length) { // quiet scan over real data? keep the real one
+      setHealth("ledger", "ok");
+      return cached;
+    }
     const coveredD = oldest === Infinity ? 0 : (now() - oldest * 1000) / 864e5;
     const solid = waves.length > 0 && coveredD >= 60; // thin scans shouldn't live 12h
     const scan = { at: now(), waves, coverFrom: oldest === Infinity ? null : dayKey(oldest), solid };
@@ -576,8 +589,11 @@ function renderTimeline(ledger) {
 
 function renderMeta({ cad }) {
   if (!cad.last) {
+    const scan = store.get("ledgerScan");
     $("metaLastWave").textContent = "Last wave: none on record";
-    $("metaWindow").textContent = "ledger scan pending";
+    $("metaWindow").textContent = scanning
+      ? "ledger scan running"
+      : scan ? "no spike days in the record" : "ledger scan pending";
     return;
   }
   $("metaLastWave").textContent = `Last wave: ${cad.last.date} (${Math.round(cad.days)}d ago)`;
@@ -786,7 +802,7 @@ const spy = new IntersectionObserver((entries) => {
       a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id));
   });
 }, { rootMargin: "-30% 0px -55% 0px" });
-["signals", "feed", "history", "methodology"].forEach((id) => {
+["signals", "feed", "history", "methodology", "report"].forEach((id) => {
   const el = $(id); if (el) spy.observe(el);
 });
 
